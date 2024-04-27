@@ -10,22 +10,22 @@ import '../models/employees.dart';
 import 'listScreen.dart';
 
 class EditScreen extends StatefulWidget {
-  EditScreen({
-    super.key,
-    required this.name,
-    required this.position,
-    required this.department,
-    required this.phone,
-    required this.index,
-    required this.salary,
-    // required String urImage,
-  });
+  EditScreen(
+      {super.key,
+      required this.name,
+      required this.position,
+      required this.department,
+      required this.phone,
+      required this.salary,
+      required this.index,
+      required this.urImage});
   final String name;
   final String position;
   final String department;
   final String phone;
-  final int index;
   final String salary;
+  final int index;
+  String urImage;
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -38,15 +38,19 @@ class _EditScreenState extends State<EditScreen> {
   final TextEditingController _departmentController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _salaryController = TextEditingController();
-  // String? _profile;
+  String? _image;
 
-  // getImage() async {
-  //   final image =
-  //       await ImagePicker.platform.getImage(source: ImageSource.gallery);
-  //   setState(() {
-  //     _profile = image!.path;
-  //   });
-  // }
+  double _taxRate = 0.1;
+  double _insuranceAmount = 100;
+  double _netSalary = 0;
+
+  getImage() async {
+    final image =
+        await ImagePicker.platform.getImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image!.path;
+    });
+  }
 
   @override
   void initState() {
@@ -55,7 +59,9 @@ class _EditScreenState extends State<EditScreen> {
     _departmentController.text = widget.department;
     _phoneController.text = widget.phone;
     _salaryController.text = widget.salary;
-    // _profile = widget.urImage;
+
+    _image = widget.urImage;
+    _calculateNetSalary();
 
     super.initState();
   }
@@ -63,12 +69,24 @@ class _EditScreenState extends State<EditScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _positionController.dispose();
+    _phoneController.dispose();
     _departmentController.dispose();
     _phoneController.dispose();
     _salaryController.dispose();
 
     super.dispose();
+  }
+
+  void _calculateNetSalary() {
+    double grossSalary = double.parse(_salaryController.text);
+    double deductions = (grossSalary * _taxRate) + _insuranceAmount;
+    _netSalary = grossSalary - deductions;
+  }
+
+  void _updateNetSalary() {
+    setState(() {
+      _calculateNetSalary();
+    });
   }
 
   @override
@@ -82,7 +100,7 @@ class _EditScreenState extends State<EditScreen> {
             },
             icon: const Icon(Icons.arrow_back)),
         title: const Text(
-          'EDIT EMBLOYEE DETAILS !',
+          'EDIT EMBLOYEE DETAILS ',
           style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
         ),
         actions: [
@@ -95,7 +113,7 @@ class _EditScreenState extends State<EditScreen> {
                 department: _departmentController.text,
                 phone: _phoneController.text,
                 salary: _salaryController.text,
-                // urImage: _profile,
+                urImage: _image,
               );
 
               Hive.box<EmployeeModel>('employeedb').putAt(widget.index, data);
@@ -144,8 +162,8 @@ class _EditScreenState extends State<EditScreen> {
                       if (value!.isEmpty) {
                         return 'please enter name';
                       }
-                      if (value.length < 3) {
-                        return 'Name must be include 3 letter';
+                      if (value.length < 5) {
+                        return 'Please enter full name';
                       }
                       return null;
                     },
@@ -154,7 +172,7 @@ class _EditScreenState extends State<EditScreen> {
                     height: 10,
                   ),
                   TextFormField(
-                    maxLength: 20,
+                    maxLength: 40,
                     controller: _positionController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -172,7 +190,6 @@ class _EditScreenState extends State<EditScreen> {
                     height: 10,
                   ),
                   TextFormField(
-                    maxLength: 14,
                     controller: _departmentController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -213,6 +230,7 @@ class _EditScreenState extends State<EditScreen> {
                   ),
                   TextFormField(
                     keyboardType: TextInputType.number,
+                    maxLength: 8,
                     controller: _salaryController,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -225,11 +243,21 @@ class _EditScreenState extends State<EditScreen> {
 
                       return null;
                     },
+                    onChanged: (value) {
+                      _updateNetSalary();
+                    },
                   ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Net Salary: \$$_netSalary',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                  const SizedBox(height: 10),
                   const SizedBox(
                     height: 10,
                   ),
-                  // Image.file(File(_profile!))
+                  Image.file(File(_image!))
                 ],
               ),
             )
@@ -238,7 +266,7 @@ class _EditScreenState extends State<EditScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // getImage();
+          getImage();
         },
         child: const Icon(
           Icons.camera,

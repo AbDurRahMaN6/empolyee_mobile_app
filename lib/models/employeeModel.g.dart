@@ -17,7 +17,7 @@ class EmployeeModelAdapter extends TypeAdapter<EmployeeModel> {
       department: fields[2] as String?,
       phone: fields[3] as String?,
       salary: fields[4] as String?,
-      // urImage: fields[5] as String?,
+      urImage: fields[5] as String?,
     );
   }
 
@@ -34,9 +34,9 @@ class EmployeeModelAdapter extends TypeAdapter<EmployeeModel> {
       ..writeByte(3)
       ..write(obj.phone)
       ..writeByte(4)
-      ..write(obj.salary);
-    // ..writeByte(5)
-    // ..write(obj.urImage);
+      ..write(obj.salary)
+      ..writeByte(5)
+      ..write(obj.urImage);
   }
 
   @override

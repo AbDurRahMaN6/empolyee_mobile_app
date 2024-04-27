@@ -5,21 +5,30 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
 class ShowDetails extends StatelessWidget {
-  const ShowDetails({
-    super.key,
-    required this.name,
-    required this.position,
-    required this.department,
-    required this.phone,
-    required this.salary,
-    // required this.urimage
-  });
+  const ShowDetails(
+      {super.key,
+      required this.name,
+      required this.position,
+      required this.department,
+      required this.phone,
+      required this.salary,
+      required this.urimage});
   final String name;
   final String position;
   final String department;
   final String phone;
   final String salary;
-  // final String urimage;
+  final String urimage;
+
+  final double taxRate = 0.1;
+  final double insuranceAmount = 100;
+
+  double calculateNetSalary() {
+    double grossSalary = double.parse(salary);
+    double deductions = (grossSalary * taxRate) + insuranceAmount;
+    double netSalary = grossSalary - deductions;
+    return netSalary;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,9 +90,15 @@ class ShowDetails extends StatelessWidget {
                   const SizedBox(
                     height: 20,
                   ),
-                  // Image.file(
-                  //   File(urimage),
-                  // )
+                  const SizedBox(height: 20),
+                  Text(
+                    "Net Salary : ${calculateNetSalary()}",
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold),
+                  ),
+                  Image.file(
+                    File(urimage),
+                  )
                 ],
               ),
             ),

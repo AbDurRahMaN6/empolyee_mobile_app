@@ -60,13 +60,12 @@ class DataSearch extends SearchDelegate<EmployeeModel> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (ctx) => ShowDetails(
-                        name: result[index].name!,
-                        position: result[index].position!,
-                        department: result[index].department!,
-                        phone: result[index].phone!,
-                        salary: result[index].salary!,
-                        // urimage: result[index].urImage!
-                      ),
+                          name: result[index].name!,
+                          position: result[index].position!,
+                          department: result[index].department!,
+                          phone: result[index].phone!,
+                          salary: result[index].salary!,
+                          urimage: result[index].urImage!),
                     ),
                   );
                 },
@@ -103,13 +102,12 @@ class DataSearch extends SearchDelegate<EmployeeModel> {
                         Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (ctx) => ShowDetails(
-                              name: result[index].name!,
-                              position: result[index].position!,
-                              department: result[index].department!,
-                              phone: result[index].phone!,
-                              salary: result[index].salary!,
-                              // urimage: result[index].urImage!
-                            ),
+                                name: result[index].name!,
+                                position: result[index].position!,
+                                department: result[index].department!,
+                                phone: result[index].phone!,
+                                salary: result[index].salary!,
+                                urimage: result[index].urImage!),
                           ),
                         );
                       },

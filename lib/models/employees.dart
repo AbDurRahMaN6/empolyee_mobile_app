@@ -14,17 +14,16 @@ class EmployeeModel {
   String? phone;
   @HiveField(4)
   String? salary;
-  // @HiveField(5)
-  // String? urImage;
+  @HiveField(5)
+  String? urImage;
 
-  EmployeeModel({
-    required this.name,
-    required this.position,
-    required this.department,
-    required this.phone,
-    required this.salary,
-    // required this.urImage,
-  });
+  EmployeeModel(
+      {required this.name,
+      required this.position,
+      required this.department,
+      required this.phone,
+      required this.salary,
+      required this.urImage});
 
   double calculateNetSalary(double taxRate, double insuranceAmount) {
     double grossSalary = double.parse(salary!);

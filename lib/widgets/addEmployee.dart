@@ -7,7 +7,7 @@ import 'package:hive/hive.dart';
 import '../models/employees.dart';
 
 class AddEmployee extends StatefulWidget {
-  const AddEmployee({Key? key}) : super(key: key);
+  const AddEmployee({super.key});
 
   @override
   State<AddEmployee> createState() => _AddEmployeeState();
@@ -17,8 +17,8 @@ class _AddEmployeeState extends State<AddEmployee> {
   final _formKey = GlobalKey<FormState>();
   String? _image;
   String? name;
-  String? department;
   String? position;
+  String? department;
   String? phone;
   String? salary;
 
@@ -38,12 +38,12 @@ class _AddEmployeeState extends State<AddEmployee> {
 
     if (isValid && _image!.isNotEmpty) {
       Hive.box<EmployeeModel>('employeedb').add(EmployeeModel(
-        name: name,
-        position: position,
-        department: department,
-        phone: phone,
-        salary: salary,
-      ));
+          name: name,
+          position: position,
+          department: department,
+          phone: phone,
+          urImage: _image,
+          salary: salary));
 
       Navigator.pop(context);
       ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -57,7 +57,6 @@ class _AddEmployeeState extends State<AddEmployee> {
     }
   }
 
-  // Method to calculate net salary
   double _calculateNetSalary() {
     double grossSalary = double.parse(salary ?? '0');
     double deductions = (grossSalary * taxRate) + insuranceAmount;
@@ -69,21 +68,21 @@ class _AddEmployeeState extends State<AddEmployee> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'ADD NEW EMPLOYEE DETAILS',
-          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
-        ),
-        actions: [
-          ElevatedButton.icon(
-            onPressed: submitData,
-            icon: const Icon(Icons.save_sharp),
-            label: const Text(
-              'SAVE',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
+          title: const Text(
+            'ADD EMPLOYEE DETAILS',
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
           ),
-        ],
-      ),
+          actions: [
+            ElevatedButton.icon(
+                onPressed: () {
+                  submitData();
+                },
+                icon: const Icon(Icons.save_sharp),
+                label: const Text(
+                  'SAVE',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ))
+          ]),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -93,14 +92,12 @@ class _AddEmployeeState extends State<AddEmployee> {
               children: [
                 TextFormField(
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Name',
-                  ),
+                      border: OutlineInputBorder(), hintText: 'Name'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter name';
+                      return 'please enter name';
                     }
-                    if (value.length < 3) {
+                    if (value.length < 5) {
                       return 'Please enter full name';
                     }
                     return null;
@@ -116,13 +113,12 @@ class _AddEmployeeState extends State<AddEmployee> {
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Position',
-                  ),
+                      border: OutlineInputBorder(), hintText: 'Position'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter position';
+                      return 'please enter position';
                     }
+
                     return null;
                   },
                   onChanged: (val) {
@@ -136,13 +132,12 @@ class _AddEmployeeState extends State<AddEmployee> {
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Department',
-                  ),
+                      border: OutlineInputBorder(), hintText: 'Department'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter department';
+                      return 'please enter name';
                     }
+
                     return null;
                   },
                   onChanged: (val) {
@@ -158,15 +153,13 @@ class _AddEmployeeState extends State<AddEmployee> {
                   keyboardType: TextInputType.number,
                   maxLength: 10,
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Phone',
-                  ),
+                      border: OutlineInputBorder(), hintText: 'Phone'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter phone';
+                      return 'please enter phone';
                     }
                     if (value.length <= 9) {
-                      return 'Please enter valid number';
+                      return 'please enter valid number';
                     }
                     return null;
                   },
@@ -181,18 +174,13 @@ class _AddEmployeeState extends State<AddEmployee> {
                 ),
                 TextFormField(
                   keyboardType: TextInputType.number,
-                  maxLength: 10,
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Salary',
-                  ),
+                      border: OutlineInputBorder(), hintText: 'Salary'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Please enter salary';
+                      return 'please enter salary';
                     }
-                    if (value.length <= 4) {
-                      return 'Please enter valid salary';
-                    }
+
                     return null;
                   },
                   onChanged: (val) {
@@ -202,17 +190,24 @@ class _AddEmployeeState extends State<AddEmployee> {
                   },
                 ),
                 const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Net Salary: \$${_calculateNetSalary()}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const SizedBox(
                   height: 40,
                 ),
                 _image == null
                     ? Container(
                         height: 380,
                         decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage('assets/avatar.png'),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                            image: DecorationImage(
+                          image: AssetImage('assets/avatar.png'),
+                          fit: BoxFit.cover,
+                        )),
                         child: const Center(
                           child: Text(
                             'Please Upload an Image ! ',
@@ -221,26 +216,22 @@ class _AddEmployeeState extends State<AddEmployee> {
                           ),
                         ),
                       )
-                    : Image.file(File(_image!)),
-
-                // Displaying net salary
-                Text(
-                  'Net Salary: \$${_calculateNetSalary()}',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                ),
+                    : Image.file(File(_image!))
               ],
             ),
           ),
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   // onPressed: getImage,
-      //   child: const Icon(
-      //     Icons.camera,
-      //     color: Colors.black,
-      //     size: 35,
-      //   ),
-      // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          getImage();
+        },
+        child: const Icon(
+          Icons.camera,
+          color: Colors.black,
+          size: 35,
+        ),
+      ),
     );
   }
 }
