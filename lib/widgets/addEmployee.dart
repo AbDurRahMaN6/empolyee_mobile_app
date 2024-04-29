@@ -135,7 +135,7 @@ class _AddEmployeeState extends State<AddEmployee> {
                       border: OutlineInputBorder(), hintText: 'Department'),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'please enter name';
+                      return 'please enter department';
                     }
 
                     return null;
